@@ -46,7 +46,7 @@ public class CaffeineWrapCache implements Cache {
     @Override
     public ValueWrapper get(Object key) {
         Object value = getInner(key);
-        return new SimpleValueWrapper(value);
+        return value == null ? null : new SimpleValueWrapper(value);
     }
 
     @Override
