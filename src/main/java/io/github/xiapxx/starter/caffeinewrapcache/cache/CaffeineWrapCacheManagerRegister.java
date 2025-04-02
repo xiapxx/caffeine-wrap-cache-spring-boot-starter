@@ -53,7 +53,9 @@ public class CaffeineWrapCacheManagerRegister implements BeanPostProcessor {
             if(caffeineWrapProperties.getExcludeClass().contains(beanClassName)){
                 return bean;
             }
-            return new CaffeineWrapCacheManager((CacheManager) bean, getCaffeine());
+            CaffeineWrapCacheManager caffeineWrapCacheManager = new CaffeineWrapCacheManager((CacheManager) bean, getCaffeine());
+            CaffeineWrapCacheHolder.setCacheManager(caffeineWrapCacheManager);
+            return caffeineWrapCacheManager;
         }
         return bean;
     }
