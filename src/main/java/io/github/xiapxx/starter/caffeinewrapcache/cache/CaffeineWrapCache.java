@@ -3,6 +3,7 @@ package io.github.xiapxx.starter.caffeinewrapcache.cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.springframework.cache.Cache;
+import org.springframework.cache.support.NullValue;
 import org.springframework.cache.support.SimpleValueWrapper;
 import java.util.concurrent.Callable;
 
@@ -78,7 +79,7 @@ public class CaffeineWrapCache implements Cache {
     @Override
     public void put(Object key, Object value) {
         actualCache.put(key, value);
-        loadingCache.put(key, value);
+        loadingCache.put(key, value == null ? NullValue.INSTANCE : value);
     }
 
     public ValueWrapper putIfAbsent(Object key, Object value) {
