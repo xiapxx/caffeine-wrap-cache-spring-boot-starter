@@ -33,7 +33,8 @@ public class CaffeineWrapCache implements Cache {
         if (valueWrapper == null) {
            return null;
         }
-        return valueWrapper.get() == null ? (allowNullValues ? NullValue.INSTANCE : null) : valueWrapper.get();
+        return valueWrapper.get() == null || valueWrapper.get() == NullValue.INSTANCE
+                ? (allowNullValues ? NullValue.INSTANCE : null) : valueWrapper.get();
     }
 
     Object getInner(Object key) {
