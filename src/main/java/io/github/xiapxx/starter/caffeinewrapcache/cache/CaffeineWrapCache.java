@@ -3,6 +3,7 @@ package io.github.xiapxx.starter.caffeinewrapcache.cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.springframework.cache.Cache;
+import org.springframework.cache.support.NullValue;
 import org.springframework.cache.support.SimpleValueWrapper;
 import java.util.concurrent.Callable;
 
@@ -26,7 +27,7 @@ public class CaffeineWrapCache implements Cache {
         if (valueWrapper == null) {
            return null;
         }
-        return valueWrapper.get();
+        return valueWrapper.get() == null ? NullValue.INSTANCE : valueWrapper.get();
     }
 
     Object getInner(Object key) {
@@ -46,13 +47,16 @@ public class CaffeineWrapCache implements Cache {
     @Override
     public ValueWrapper get(Object key) {
         Object value = getInner(key);
-        return value == null ? null : new SimpleValueWrapper(value);
+        return value == null ? null : new SimpleValueWrapper(value == NullValue.INSTANCE ? null : value);
     }
 
     @Override
     public <T> T get(Object key, Class<T> type) {
         Object value = getInner(key);
-        if (value != null && type != null && !type.isInstance(value)) {
+        if(value == null || value == NullValue.INSTANCE){
+            return null;
+        }
+        if (type != null && !type.isInstance(value)) {
             throw new IllegalStateException(
                     "Cached value is not of required type [" + type.getName() + "]: " + value);
         }
@@ -62,32 +66,32 @@ public class CaffeineWrapCache implements Cache {
 
     @Override
     public <T> T get(Object key, Callable<T> valueLoader) {
-        T value = (T) getInner(key);
-        if(value == null){
+        Object value = getInner(key);
+        if(value == null || value == NullValue.INSTANCE){
             try {
                 value = valueLoader.call();
                 put(key, value);
-                return value;
+                return value == null || value == NullValue.INSTANCE ? null : (T) value;
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
-        return value;
+        return (T) value;
     }
 
     @Override
     public void put(Object key, Object value) {
         actualCache.put(key, value);
-        loadingCache.invalidate(key);
+        loadingCache.put(key, value == null ? NullValue.INSTANCE : value);
     }
 
     public ValueWrapper putIfAbsent(Object key, Object value) {
-        ValueWrapper result = get(key);
-        if(result == null || result.get() == null){
+        ValueWrapper valueWrapper = get(key);
+        if(valueWrapper == null || valueWrapper.get() == null){
             put(key, value);
             return null;
         }
-        return result;
+        return valueWrapper;
     }
 
     @Override
@@ -101,6 +105,5 @@ public class CaffeineWrapCache implements Cache {
         actualCache.clear();
         loadingCache.invalidateAll();
     }
-
 
 }
