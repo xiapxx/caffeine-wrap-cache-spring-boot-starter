@@ -3,6 +3,7 @@ package io.github.xiapxx.starter.caffeinewrapcache.cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.springframework.cache.Cache;
+import org.springframework.cache.support.AbstractValueAdaptingCache;
 import org.springframework.cache.support.NullValue;
 import org.springframework.cache.support.SimpleValueWrapper;
 import java.util.concurrent.Callable;
@@ -17,8 +18,13 @@ public class CaffeineWrapCache implements Cache {
 
     private LoadingCache<Object, Object> loadingCache;
 
+    private boolean allowNullValues = true; // 默认true; 跟随被封装的缓存的策略
+
     public CaffeineWrapCache(Cache actualCache, Caffeine<Object, Object> caffeine) {
         this.actualCache = actualCache;
+        if (actualCache instanceof AbstractValueAdaptingCache) {
+            this.allowNullValues = ((AbstractValueAdaptingCache)actualCache).isAllowNullValues();
+        }
         this.loadingCache = caffeine.build(key -> getActual(key));
     }
 
@@ -27,7 +33,7 @@ public class CaffeineWrapCache implements Cache {
         if (valueWrapper == null) {
            return null;
         }
-        return valueWrapper.get() == null ? NullValue.INSTANCE : valueWrapper.get();
+        return valueWrapper.get() == null ? (allowNullValues ? NullValue.INSTANCE : null) : valueWrapper.get();
     }
 
     Object getInner(Object key) {
@@ -81,6 +87,10 @@ public class CaffeineWrapCache implements Cache {
 
     @Override
     public void put(Object key, Object value) {
+        if(!allowNullValues && (value == null || value == NullValue.INSTANCE)){
+            evict(key);
+            return;
+        }
         actualCache.put(key, value);
         loadingCache.put(key, value == null ? NullValue.INSTANCE : value);
     }
