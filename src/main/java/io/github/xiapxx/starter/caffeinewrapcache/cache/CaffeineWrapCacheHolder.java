@@ -1,6 +1,7 @@
 package io.github.xiapxx.starter.caffeinewrapcache.cache;
 
 import org.springframework.util.Assert;
+import java.util.Collection;
 
 /**
  * 缓存持有者
@@ -51,7 +52,7 @@ public class CaffeineWrapCacheHolder {
     }
 
     /**
-     * 缓存删除
+     * 缓存删除(本地caffeine缓存和被嵌套的缓存)
      *
      * @param name 缓存名称
      * @param key 缓存key
@@ -62,7 +63,7 @@ public class CaffeineWrapCacheHolder {
     }
 
     /**
-     * 缓存清空
+     * 缓存清空(本地caffeine缓存和被嵌套的缓存)
      *
      * @param name 缓存名称
      */
@@ -71,5 +72,52 @@ public class CaffeineWrapCacheHolder {
         CACHE_MANAGER.getCaffeineWrapCache(name).clear();
     }
 
+    /**
+     * 仅仅删除本地缓存(本地caffeine缓存)
+     *
+     * @param name name
+     * @param key key
+     */
+    public static void removeLocal(String name, Object key) {
+        checkIsInit();
+        CACHE_MANAGER.getCaffeineWrapCache(name).evictLocal(key);
+    }
 
+    /**
+     * 缓存清空(本地caffeine缓存)
+     *
+     * @param name name
+     */
+    public static void removeAllLocal(String name) {
+        checkIsInit();
+        CACHE_MANAGER.getCaffeineWrapCache(name).clearLocal();
+    }
+
+    /**
+     * 清空整个应用的缓存(本地caffeine缓存和被嵌套的缓存)
+     */
+    public static void removeAll() {
+        checkIsInit();
+        Collection<String> cacheNames = CACHE_MANAGER.getCacheNames();
+        if(cacheNames == null || cacheNames.isEmpty()){
+            return;
+        }
+        for (String cacheName : cacheNames) {
+            removeAll(cacheName);
+        }
+    }
+
+    /**
+     * 清空整个应用的本地缓存(本地caffeine缓存)
+     */
+    public static void removeAllLocal() {
+        checkIsInit();
+        Collection<String> cacheNames = CACHE_MANAGER.getCacheNames();
+        if(cacheNames == null || cacheNames.isEmpty()){
+            return;
+        }
+        for (String cacheName : cacheNames) {
+            removeAllLocal(cacheName);
+        }
+    }
 }

@@ -111,9 +111,25 @@ public class CaffeineWrapCache implements Cache {
         loadingCache.invalidate(key);
     }
 
+    /**
+     * 仅仅删除本地缓存
+     *
+     * @param key key
+     */
+    void evictLocal(Object key) {
+        loadingCache.invalidate(key);
+    }
+
     @Override
     public void clear() {
         actualCache.clear();
+        loadingCache.invalidateAll();
+    }
+
+    /**
+     * 仅仅删除本地缓存
+     */
+    void clearLocal(){
         loadingCache.invalidateAll();
     }
 
