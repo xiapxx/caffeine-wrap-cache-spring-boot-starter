@@ -40,10 +40,10 @@
 * CaffeineWrapCacheHolder.put(缓存名称, 缓存key, 缓存值): 设置缓存值
 
 # 配置
-caffeine.wrap.cache.maxSize=5000 // caffeine最大存储的对象个数, 默认5000
-caffeine.wrap.cache.expire=60S // 过期时间, 默认60秒; 如果60秒没有读缓存, 并且60秒没写缓存时, 自动过期
-caffeine.wrap.cache.excludeClass[n]  // 希望排除哪些缓存管理器, 排除的缓存管理器将不封装, 默认空; 例如org.springframework.cache.support.SimpleCacheManager
-caffeine.wrap.cache.threadPool.number=-1 // 线程池的核心线程数; 等于0或null: 线程数=cpu核心数, 等于-1(默认值): 线程数=(cpu核心数/2 + 1),  大于0: 线程数=配置的值, 小于-1: 线程数=1
-caffeine.wrap.cache.threadPool.queueSize=1000  // 线程池的阻塞队列个数, 默认1000
+    caffeine.wrap.cache.maxSize=5000 // caffeine最大存储的对象个数, 默认5000
+    caffeine.wrap.cache.expire=60S // 过期时间, 默认60秒; 如果60秒没有读缓存, 并且60秒没写缓存时, 自动过期
+    caffeine.wrap.cache.excludeClass[n]  // 希望排除哪些缓存管理器, 排除的缓存管理器将不封装, 默认空; 例如org.springframework.cache.support.SimpleCacheManager
+    caffeine.wrap.cache.threadPool.number=-1 // 线程池的核心线程数; 等于0或null: 线程数=cpu核心数, 等于-1(默认值): 线程数=(cpu核心数/2 + 1),  大于0: 线程数=配置的值, 小于-1: 线程数=1
+    caffeine.wrap.cache.threadPool.queueSize=1000  // 线程池的阻塞队列个数, 默认1000
 
 
