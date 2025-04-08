@@ -52,6 +52,18 @@ public class CaffeineWrapCacheHolder {
     }
 
     /**
+     * 设置缓存
+     *
+     * @param name 缓存名称
+     * @param key 缓存key
+     * @param value 缓存值
+     */
+    public static void put(String name, Object key, Object value) {
+        checkIsInit();
+        CACHE_MANAGER.getCaffeineWrapCache(name).put(key, value);
+    }
+
+    /**
      * 缓存删除(本地caffeine缓存和被嵌套的缓存)
      *
      * @param name 缓存名称
