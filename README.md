@@ -18,7 +18,7 @@
     <version>1.0.9</version>
 </dependency>
 ~~~~
-## 开始缓存
+## 开启缓存
     @EnableCaching
     @Configuration
     public class XXConfiguration{
