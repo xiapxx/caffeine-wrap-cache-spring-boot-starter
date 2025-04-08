@@ -18,6 +18,21 @@
     <version>1.0.9</version>
 </dependency>
 ~~~~
+~~~~xml
+<dependency>
+    <groupId>com.github.ben-manes.caffeine</groupId>
+    <artifactId>caffeine</artifactId>
+    <version>2.6.2</version>
+</dependency>
+~~~~
+~~~~xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-cache</artifactId>
+    <version>2.1.7.RELEASE</version>
+</dependency>
+~~~~
+
 ## 开启缓存
     @EnableCaching
     @Configuration
